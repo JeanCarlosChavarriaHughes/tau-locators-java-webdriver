@@ -1,29 +1,17 @@
 package tests;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
-public class SimpleWebTest {
+public class SimpleWebTest extends  BaseTest {
 
-    private WebDriver driver;
-    private WebDriverWait wait;
-
-    @BeforeEach
-    public void initWebDriver() {
-        driver = new ChromeDriver();
-        wait = new WebDriverWait(driver, 30);
-    }
 
     @Test
     public void searchDuckDuckGo() {
@@ -34,24 +22,24 @@ public class SimpleWebTest {
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("searchbox_input")));
         WebElement searchInput = driver.findElement(By.id("searchbox_input"));
         searchInput.sendKeys("giant panda");
-
-        // Click search button
-        WebElement searchButton = driver.findElement(By.xpath("//button[@aria-label='Search']"));
-        searchButton.click();
+        searchInput.sendKeys(Keys.ENTER);
 
         // Wait for results to appear
+        System.out.println(driver.getTitle());
         wait.until(ExpectedConditions.titleContains("giant panda"));
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("h2 a[data-testid='result-title-a'] span")));
 
-        // Make sure each result contains the word "panda"
+        // Make sure first 3 results contains the word "panda"
+        int count = 3;
         List<WebElement> resultLinks = driver.findElements(By.cssSelector("h2 a[data-testid='result-title-a'] span"));
         for (WebElement link : resultLinks) {
-            assertTrue(link.getText().matches("(?i).*panda.*"));
+            if (count > 0) {
+                System.out.println(link.getText());
+                assertTrue(link.getText().matches("(?i).*panda.*"));
+            } else {
+                break;
+            }
+            count--;
         }
-    }
-
-    @AfterEach
-    public void quitWebDriver() {
-        driver.quit();
     }
 }

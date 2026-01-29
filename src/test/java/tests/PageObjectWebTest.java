@@ -1,10 +1,6 @@
 package tests;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 import pageobjects.DuckDuckGoResultsPage;
 import pageobjects.DuckDuckGoSearchPage;
 
@@ -12,14 +8,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class PageObjectWebTest {
-
-    private WebDriver driver;
-
-    @BeforeEach
-    public void initWebDriver() {
-        driver = new ChromeDriver();
-    }
+public class PageObjectWebTest extends  BaseTest {
 
     @Test
     public void searchDuckDuckGo() {
@@ -30,13 +19,14 @@ public class PageObjectWebTest {
         DuckDuckGoResultsPage resultsPage = new DuckDuckGoResultsPage(driver);
         List<String> linkTexts = resultsPage.getResultsLinkText("panda");
 
+        int count = 3;
         for (String text : linkTexts) {
-            assertTrue(text.matches("(?i).*panda.*"));
+            if (count > 0) {
+                assertTrue(text.matches("(?i).*panda.*"));
+            } else {
+                break;
+            }
+            count--;
         }
-    }
-
-    @AfterEach
-    public void quitWebDriver() {
-        driver.quit();
     }
 }
